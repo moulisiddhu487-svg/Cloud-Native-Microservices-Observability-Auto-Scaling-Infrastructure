@@ -1,23 +1,35 @@
 #!/bin/bash
 set -e
 
-echo "=== 1. Installing K3s Cluster ==="
-curl -sfL https://get.k3s.io | sh -
-mkdir -p ~/.kube
-cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
-chmod 600 ~/.kube/config
+echo "🚀 [1/5] Installing K3s Kubernetes & Helm..."
+curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-echo "=== 2. Deploying Microservices (Google Boutique) ==="
+echo "📦 [2/5] Creating namespaces..."
 kubectl create namespace boutique --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -n boutique -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/main/release/kubernetes-manifests.yaml
+kubectl create namespace jenkins --dry-run=client -o yaml | kubectl apply -f -
 
-# Patch Boutique Storefront to port 30088
-kubectl patch svc frontend-external -n boutique -p '{"spec": {"type": "NodePort", "ports": [{"port": 80, "targetPort": 8080, "nodePort": 30088}]}}'
-kubectl scale deployment loadgenerator -n boutique --replicas=0
+echo "🛍️ [3/5] Deploying Google Online Boutique & HPA..."
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/main/release/kubernetes-manifests.yaml -n boutique
+kubectl apply -f boutique-patch.yaml
+kubectl apply -f hpa.yaml
 
-echo "=== 3. Deploying Grafana & Jenkins ==="
-kubectl apply -f monitoring.yaml
+echo "📊 [4/5] Deploying Full Observability Stack via Helm (Prometheus, Alertmanager, Grafana)..."
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+helm upgrade --install my-prometheus prometheus-community/prometheus
+helm upgrade --install my-grafana grafana/grafana --set service.type=NodePort --set service.nodePort=30300
+
+echo "⚙️ [5/5] Deploying Jenkins Controller..."
 kubectl apply -f jenkins.yaml
 
-echo "=== Setup Done! Checking Pods ==="
-kubectl get pods -A
+echo ""
+echo "========================================================"
+echo "✅ Full Platform Successfully Deployed via Helm & K3s!"
+echo "• Boutique Storefront : http://<EC2-PUBLIC-IP>:30088"
+echo "• Grafana Dashboard   : http://<EC2-PUBLIC-IP>:30300"
+echo "• Jenkins Controller  : http://<EC2-PUBLIC-IP>:30808"
+echo "========================================================"
