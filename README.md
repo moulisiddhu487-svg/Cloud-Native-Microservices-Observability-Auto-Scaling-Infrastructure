@@ -1,15 +1,14 @@
 <div align="center">
 
-# ⚡ Resilient Cloud-Native Microservices & Self-Healing Platform
+# ⚡ Automated K3s Cloud Platform & CI/CD Infrastructure
 
-### *Production-Grade K3s Kubernetes Platform on AWS EC2 with Automated CI/CD, Dynamic HPA & Full Observability*
+### *Production-Grade Kubernetes (K3s) Environment on AWS EC2 Orchestrating Google Boutique Microservices, HPA Autoscaling, Jenkins CI/CD & Grafana Observability*
 
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-K3s-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://k3s.io/)
 [![AWS EC2](https://img.shields.io/badge/AWS-EC2%20(m7i--flex.large)-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ec2/)
 [![Jenkins](https://img.shields.io/badge/CI%2FCD-Jenkins%20LTS-D24939?style=for-the-badge&logo=jenkins&logoColor=white)](https://www.jenkins.io/)
 [![Grafana](https://img.shields.io/badge/Observability-Grafana%20v10-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
-[![Microservices](https://img.shields.io/badge/Microservices-11--Tier%20Google%20Boutique-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://github.com/GoogleCloudPlatform/microservices-demo)
-[![OS](https://img.shields.io/badge/OS-Ubuntu%2024.04%20LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![Ubuntu](https://img.shields.io/badge/OS-Ubuntu%2024.04%20LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
 
 </div>
 
@@ -17,9 +16,9 @@
 
 ## 📌 Executive Summary
 
-This repository hosts the production-ready infrastructure manifests, automated provisioning scripts, and CI/CD pipelines for an **enterprise cloud-native e-commerce ecosystem**. 
+This repository contains the infrastructure code, declarative Kubernetes manifests, and automated provisioning scripts for a **resilient cloud-native microservices platform**. 
 
-Built on lightweight Kubernetes (**K3s**) hosted on **AWS EC2**, the platform automates the deployment of **Google Cloud's 11-tier polyglot microservices**, implements automated **Horizontal Pod Autoscaling (HPA)** based on real-time CPU telemetry, orchestrates **Jenkins CI/CD automation**, and delivers infrastructure-wide **Grafana observability**.
+Built from scratch on an **AWS EC2 compute instance**, this project demonstrates how to provision lightweight **K3s Kubernetes**, manage multi-tier enterprise workloads (**Google Cloud's 11 Online Boutique microservices**), implement real-time **Horizontal Pod Autoscaling (HPA)**, automate workflows via a **Jenkins CI/CD pipeline**, and establish live cluster observability through **Grafana**.
 
 <hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
 
@@ -47,139 +46,105 @@ Built on lightweight Kubernetes (**K3s**) hosted on **AWS EC2**, the platform au
 [![Prometheus](https://img.shields.io/badge/PROMETHEUS-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io/)
 [![Grafana](https://img.shields.io/badge/GRAFANA-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
 
-### 💻 Polyglot Microservices Runtime
-[![Go](https://img.shields.io/badge/GO-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
-[![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
-[![Node.js](https://img.shields.io/badge/NODE.JS-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Python](https://img.shields.io/badge/PYTHON-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Java](https://img.shields.io/badge/JAVA-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
-[![Redis](https://img.shields.io/badge/REDIS-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
-
 </div>
 
 <hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
 
 ## 🏛️ System Architecture
 
-                              AWS EC2 INSTANCE (m7i-flex.large / 8GB RAM)
-┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                                                                                          │
-│   PUBLIC TRAFFIC INGRESS & NODEPORT ROUTING                                                              │
-│   ├── Shoppers Traffic      ──────> NodePort :30088 ───> [ frontend-service (ClusterIP: 80) ]            │
-│   ├── CI/CD Pipeline Ops    ──────> NodePort :30808 ───> [ jenkins-service  (ClusterIP: 8080) ]          │
-│   └── Telemetry & Metrics   ──────> NodePort :30300 ───> [ grafana-service  (ClusterIP: 3000) ]          │
-│                                                                                                          │
-│  ┌────────────────────────────────────────────────────────────────────────────────────────────────────┐  │
-│  │                                   K3s KUBERNETES RUNTIME & CONTROL PLANE                           │  │
-│  │                                                                                                    │  │
-│  │   ┌─────────────────────────────────────────────────────────────────────────────────────────────┐  │  │
-│  │   │  Namespace: boutique (11 Polyglot Microservices)                                            │  │  │
-│  │   │                                                                                             │  │  │
-│  │   │  [ Frontend Pod ] ◄── (HPA Dynamic Auto-Scaler: 1 to 3 Replicas @ 80% CPU Target)           │  │  │
-│  │   │        │                                                                                    │  │  │
-│  │   │        ├──► [ Cart Service ] ────────► [ Redis In-Memory Cart Store ]                       │  │  │
-│  │   │        ├──► [ Product Catalog ]        ├──► [ Recommendation Service ]                      │  │  │
-│  │   │        ├──► [ Currency Service ]       ├──► [ Shipping Service ]                            │  │  │
-│  │   │        ├──► [ Payment Service ]        ├──► [ Email Service ]                               │  │  │
-│  │   │        └──► [ Checkout Service ]       └──► [ Ad Service ]                                  │  │  │
-│  │   │                                                                                             │  │  │
-│  │   │  [ loadgenerator (Locust Engine) ] ── (Simulates Concurrent Customer Traffic Load)         │  │  │
-│  │   └─────────────────────────────────────────────────────────────────────────────────────────────┘  │  │
-│  │                                                                                                    │  │
-│  │   ┌───────────────────────────────────┐        ┌────────────────────────────────────────────────┐  │  │
-│  │   │  Namespace: jenkins               │        │  Namespace: monitoring                         │  │  │
-│  │   │  • Jenkins CI/CD Controller Pod   │        │  • Grafana Metrics Dashboard UI                │  │  │
-│  │   │  • Declarative Pipeline Execution │        │  • Real-Time Cluster Telemetry Engine          │  │  │
-│  │   └───────────────────────────────────┘        └────────────────────────────────────────────────┘  │  │
-│  │                                                                                                    │  │
-│  │   ┌─────────────────────────────────────────────────────────────────────────────────────────────┐  │  │
-│  │   │  SRE & Cluster Resilience Engine                                                            │  │  │
-│  │   │  • Self-Healing Reconciliation: Pod crash recovery in < 2 seconds                           │  │  │
-│  │   │  • Metrics Server & Autoscaling v2: Elastic scaling based on CPU consumption                │  │  │
-│  │   └─────────────────────────────────────────────────────────────────────────────────────────────┘  │  │
-│  └────────────────────────────────────────────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph AWS["AWS Cloud Infrastructure (EC2 m7i-flex.large)"]
+        Ingress["Public Traffic & AWS Security Group Rules"]
+        
+        subgraph Ports["Ingress NodePort Routing"]
+            P1["Port :30088 (Storefront)"]
+            P2["Port :30300 (Grafana)"]
+            P3["Port :30808 (Jenkins)"]
+        end
+        
+        Ingress --> P1
+        Ingress --> P2
+        Ingress --> P3
 
+        subgraph K3s["K3s Lightweight Kubernetes Cluster Runtime"]
+            
+            subgraph BoutiqueNS["Namespace: boutique (11 Google Microservices)"]
+                Frontend["Frontend Service\n(Target: HPA 1-3 Pods @ 80% CPU)"]
+                Cart["Cart Service"]
+                Redis[("Redis Cart Cache")]
+                Catalog["Product Catalog Service"]
+                Payment["Payment Service"]
+                Shipping["Shipping Service"]
+                Email["Email Service"]
+                Checkout["Checkout Service"]
+                Recommend["Recommendation Service"]
+                Ad["Ad Service"]
+                Currency["Currency Service"]
+                LoadGen["Locust Load Generator\n(Traffic Simulation Engine)"]
+                
+                P1 --> Frontend
+                Frontend --> Cart --> Redis
+                Frontend --> Catalog
+                Frontend --> Payment
+                Frontend --> Shipping
+                Frontend --> Email
+                Frontend --> Checkout
+                Frontend --> Recommend
+                Frontend --> Ad
+                Frontend --> Currency
+                LoadGen -.->|Simulated Shopper Surge| Frontend
+            end
 
-<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
+            subgraph MonitoringNS["Namespace: monitoring"]
+                Grafana["Grafana Observability Engine\n(Cluster & Node Telemetry UI)"]
+                P2 --> Grafana
+            end
 
-## 🌐 Network & Ingress Port Matrix
+            subgraph JenkinsNS["Namespace: jenkins"]
+                Jenkins["Jenkins CI/CD Automation Controller\n(Declarative Pipeline Engine)"]
+                P3 --> Jenkins
+            end
 
-| Application / Console | Namespace | Target Port | NodePort | Access Endpoint URL | Protocol / Status |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| 🛍️ **Boutique Storefront** | `boutique` | `8080` | **`30088`** | `http://<EC2-PUBLIC-IP>:30088` | `HTTP / Active` |
-| 📊 **Grafana Dashboard** | `monitoring` | `3000` | **`30300`** | `http://<EC2-PUBLIC-IP>:30300` | `HTTP / Active` |
-| ⚙️ **Jenkins Automation** | `jenkins` | `8080` | **`30808`** | `http://<EC2-PUBLIC-IP>:30808` | `HTTP / Active` |
-
-<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
-
-## 🔥 Core Capabilities & Features
-
-### 1. 🚀 Zero-Touch Automated Bootstrapping (`deploy-all.sh`)
-* Provisions K3s Kubernetes, creates isolated namespaces (`boutique`, `monitoring`, `jenkins`), downloads Google Cloud Online Boutique microservices, applies NodePort patches, applies HPA configuration, and launches Jenkins and Grafana automatically in **under 3 minutes**.
-
-### 2. 🛡️ Self-Healing Pod Architecture
-* Continuous Kubernetes controller reconciliation loops. If any microservice pod experiences a crash, fatal panic, or manual deletion, Kubernetes reconciles cluster state and schedules a healthy pod replica in **$< 2$ seconds** without dropping application availability.
-
-### 3. 📈 Dynamic Horizontal Pod Autoscaling (`hpa.yaml`)
-* Configured using `autoscaling/v2` API:
-  * **Target Metric:** 80% CPU Utilization
-  * **Scaling Boundaries:** `Min: 1 Pod` | `Max: 3 Pods`
-  * Dynamically provisions extra pods during traffic surges and scales back to 1 pod during idle periods to minimize cloud costs.
-
-### 4. 🔄 Declarative CI/CD Automation (`Jenkinsfile` & `jenkins.yaml`)
-* Jenkins LTS containerized inside Kubernetes, mapping pipeline tasks as code to validate deployment health, test endpoint accessibility, and manage microservice lifecycles.
-
-### 5. 📊 Real-Time Observability (`monitoring.yaml`)
-* Dedicated Grafana deployment in the `monitoring` namespace to monitor cluster infrastructure, resource consumption, and microservice behavior.
-
-<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
-
-## ⚡ Quickstart & 1-Click Rebuild Guide
-
-### Prerequisites
-* 1x AWS EC2 Instance (**Ubuntu 24.04 LTS**, recommended type: `m7i-flex.large` or `t3.large` with 8GB RAM).
-* AWS Security Group with inbound ports `22`, `30088`, `30300`, and `30808` open.
-
-### Step 1: Clone and Run Deployment Script
-```bash
-git clone [https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git](https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git) ~/my-project
-cd ~/my-project
-chmod +x deploy-all.sh
-sudo ./deploy-all.sh
-Step 2: Verify Running Cluster
-Bash
-# Check all pods across all namespaces
-kubectl get pods -A
-
-# Check Horizontal Pod Autoscaler status
-kubectl get hpa -n boutique
-🧪 Chaos Engineering & Resilience Testing
-🔬 Test 1: Simulating Pod Crash & Self-Healing
-Verify zero-downtime container self-healing:
-
-Bash
-# Delete a running frontend pod
+            subgraph SRE["Cluster Resilience & Control Loop"]
+                Metrics["Metrics Server API"]
+                HPACtrl["Horizontal Pod Autoscaler (HPA v2)"]
+                Reconciler["K3s ReplicaSet Controller (Auto-Healing)"]
+                
+                Metrics --> HPACtrl
+                HPACtrl -.->|Dynamic Replicas 1-3| Frontend
+                Reconciler -.->|Instant Pod Recreation < 2s| BoutiqueNS
+            end
+        end
+    end
+🌐 Network & Ingress Routing MatrixApplication / ConsoleNamespaceTarget Container PortExposed NodePortAccess Endpoint URLProtocol / Status🛍️ Boutique Storefrontboutique808030088http://<EC2-PUBLIC-IP>:30088HTTP / Active📊 Grafana Observabilitymonitoring300030300http://<EC2-PUBLIC-IP>:30300HTTP / Active⚙️ Jenkins Automationjenkins808030808http://<EC2-PUBLIC-IP>:30808HTTP / Active🔍 Engineering Highlights & SRE Capabilities1. Google Online Boutique OrchestrationDeploys Google Cloud's official 11-tier microservices architecture within a dedicated boutique namespace. The deployment includes stateful caching (redis-cart), inter-service communication, and an edge web layer (frontend) serving simulated e-commerce operations.2. High-Availability & Self-Healing ResilienceLeveraging Kubernetes continuous state reconciliation loops, if any microservice pod experiences an unexpected crash, out-of-memory error, or manual deletion, the ReplicaSet controller detects the drift and schedules a replacement pod in $< 2$ seconds, ensuring zero downtime.3. Dynamic Horizontal Pod Autoscaling (HPA)Configured using the autoscaling/v2 API:Target Metric: 80% Average CPU UtilizationScale Boundaries: Min: 1 Pod | Max: 3 PodsKeeps resource consumption minimal during baseline usage (1 pod) and elastically scales up to 3 pods during traffic surges to maintain latency SLAs.4. Containerized Jenkins CI/CD AutomationJenkins LTS runs natively inside the cluster (jenkins namespace) with a persistent workspace. The declarative pipeline automates health checks, verifies service availability across NodePorts, and coordinates zero-downtime rolling updates.5. Centralized Observability & TelemetryGrafana is deployed inside the monitoring namespace to provide real-time visibility into node health, pod resource limits, and cluster performance metrics.🧪 Chaos Testing & Live Verification🔬 Test 1: Simulating Pod Failure & Self-HealingDemonstrate zero-downtime container self-healing:Bash# Force delete an active frontend pod
 kubectl delete pod -l app=frontend -n boutique
 
-# Observe instant recreation in real-time
+# Observe instant reconciliation and pod rebirth in real time
 kubectl get pods -n boutique -l app=frontend -w
-🔬 Test 2: Simulating Traffic Spike & HPA Auto-Scaling
-Drive synthetic traffic to trigger Horizontal Pod Autoscaling:
-
-Bash
-# Spin up the Locust traffic load generator
+🔬 Test 2: Simulating Traffic Surge & HPA Auto-ScalingGenerate synthetic load using the Locust engine to trigger autoscaling:Bash# Scale up the load generator to simulate traffic
 kubectl scale deployment loadgenerator -n boutique --replicas=1
 
-# Watch HPA detect CPU spike and scale replicas from 1 to 3
+# Watch the HPA controller detect high CPU and scale from 1 to 3 pods
 kubectl get hpa -n boutique -w
 
-# Stop traffic simulation and observe automatic scale-down
+# Cool down and observe automatic scale-down back to 1 pod
 kubectl scale deployment loadgenerator -n boutique --replicas=0
-📁 Repository Blueprint
-Plaintext
-├── deploy-all.sh          # Master one-click deployment & bootstrap script
-├── boutique-patch.yaml    # NodePort service manifest exposing Storefront on :30088
+⚡ 1-Click Spin-Up & Rebuild Guide (3 Minutes)This entire platform can be rebuilt on a clean AWS EC2 instance using the automated bootstrap script:Step 1: Provision the AWS EC2 InstanceInstance Type: m7i-flex.large or t3.large (2 vCPU, 8 GB RAM recommended)OS: Ubuntu 24.04 LTSSecurity Group Inbound Rules:SSH: Port 22Storefront: Port 30088Grafana: Port 30300Jenkins: Port 30808Step 2: Clone and BootstrapRun these commands on your EC2 instance:Bash# 1. Clone repository
+git clone [https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git](https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git) ~/my-project
+cd ~/my-project
+
+# 2. Make script executable and execute
+chmod +x deploy-all.sh
+sudo ./deploy-all.sh
+Step 3: Verify Running ServicesBash# Check all cluster pods across namespaces
+kubectl get pods -A
+
+# Confirm Horizontal Pod Autoscaler status
+kubectl get hpa -n boutique
+Step 4: Access Your EndpointsE-Commerce Web Storefront: http://<YOUR_EC2_PUBLIC_IP>:30088Grafana Dashboard: http://<YOUR_EC2_PUBLIC_IP>:30300Jenkins Automation Server: http://<YOUR_EC2_PUBLIC_IP>:30808📁 Repository BlueprintPlaintext.
+├── deploy-all.sh          # 1-Click Master Infrastructure Bootstrapping Script
+├── boutique-patch.yaml    # NodePort service patch exposing Storefront on :30088
 ├── hpa.yaml               # Horizontal Pod Autoscaler manifest (80% CPU target, 1-3 replicas)
 ├── jenkins.yaml           # Deployment & NodePort manifest for Jenkins Controller (:30808)
 ├── monitoring.yaml        # Deployment & NodePort manifest for Grafana (:30300)
@@ -188,8 +153,8 @@ Plaintext
 
 ---
 
-#### 4. Save and Publish
-1. Click the green **Commit changes...** button at the top right of GitHub.
-2. Click **Commit changes** again on the confirmation prompt.
+### How to apply this directly in your EC2 terminal:
 
-When you return to your main repository page, GitHub will render the badges, diagrams, red dividers, and documentation right on your project front page.
+```bash
+cd ~/my-project
+git pull origin main
