@@ -1,26 +1,27 @@
 <div align="center">
 
-# ⚡ Automated K3s Cloud Platform & CI/CD Infrastructure
+# ⚡ Automated K3s Cloud Platform & SRE Self-Healing Infrastructure
 
-### *Production-Grade Kubernetes (K3s) Environment on AWS EC2 Orchestrating Google Boutique Microservices, HPA Autoscaling, Jenkins CI/CD & Grafana Observability*
-
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-K3s-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://k3s.io/)
-[![AWS EC2](https://img.shields.io/badge/AWS-EC2%20(m7i--flex.large)-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ec2/)
-[![Jenkins](https://img.shields.io/badge/CI%2FCD-Jenkins%20LTS-D24939?style=for-the-badge&logo=jenkins&logoColor=white)](https://www.jenkins.io/)
-[![Grafana](https://img.shields.io/badge/Observability-Grafana%20v10-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
-[![Ubuntu](https://img.shields.io/badge/OS-Ubuntu%2024.04%20LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+### *Production-Grade Kubernetes (K3s) Environment on AWS EC2 with Google Boutique Microservices, Dynamic HPA Autoscaling, Jenkins CI/CD & Grafana Observability*
 
 </div>
 
-<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
+<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 30px 0;" />
 
 ## 📌 Executive Summary
 
-This repository contains the infrastructure code, declarative Kubernetes manifests, and automated provisioning scripts for a **resilient cloud-native microservices platform**. 
+An enterprise-grade, automated **DevOps & Site Reliability Engineering (SRE)** platform built from scratch on **AWS EC2** using lightweight Kubernetes (**K3s**). 
 
-Built from scratch on an **AWS EC2 compute instance**, this project demonstrates how to provision lightweight **K3s Kubernetes**, manage multi-tier enterprise workloads (**Google Cloud's 11 Online Boutique microservices**), implement real-time **Horizontal Pod Autoscaling (HPA)**, automate workflows via a **Jenkins CI/CD pipeline**, and establish live cluster observability through **Grafana**.
+The platform delivers an automated, zero-touch infrastructure lifecycle orchestrating **Google Cloud's 11-tier Online Boutique microservices**, automated **Horizontal Pod Autoscaling (HPA)** triggered by real-time CPU telemetry, containerized **Jenkins CI/CD automation**, and cluster-wide **Grafana observability**.
 
-<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
+### 🌟 Key Engineering Highlights
+* 🚀 **Zero-Touch Infrastructure Bootstrapping:** A single shell script (`deploy-all.sh`) provisions K3s Kubernetes, configures namespace isolation (`boutique`, `monitoring`, `jenkins`), and launches all 11 microservices in **under 3 minutes**.
+* 🛡️ **Sub-2-Second Self-Healing Architecture:** Continuous Kubernetes ReplicaSet reconciliation loops automatically detect pod failures, panics, or node disruptions and restart healthy replacement containers in **$< 2$ seconds** with zero user downtime.
+* 📈 **Dynamic Horizontal Pod Autoscaling (HPA):** Configured via Kubernetes `autoscaling/v2` API to dynamically scale the edge frontend from **1 to 3 pods** when traffic spikes exceed the **80% CPU target utilization threshold**.
+* 🔄 **Declarative CI/CD Automation:** Containerized **Jenkins LTS** automation engine executing pipeline-as-code (`Jenkinsfile`) for automated endpoint verification, smoke tests, and zero-downtime microservice rollouts.
+* 📊 **Full-Stack Telemetry & Observability:** Real-time **Grafana** monitoring dashboard deployed in a dedicated namespace for cluster metrics, pod health, and resource utilization tracking.
+
+<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 30px 0;" />
 
 ## 🛠️ Tech Stack & Engineering Tooling
 
@@ -48,81 +49,132 @@ Built from scratch on an **AWS EC2 compute instance**, this project demonstrates
 
 </div>
 
-<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 25px 0;" />
+<hr style="background-color: #FF0000; height: 3px; border: none; border-radius: 2px; margin: 30px 0;" />
 
 ## 🏛️ System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph AWS["AWS Cloud Infrastructure (EC2 m7i-flex.large)"]
-        Ingress["Public Traffic & AWS Security Group Rules"]
+    subgraph AWS ["AWS Cloud Infrastructure (EC2 Compute Instance)"]
+        Traffic["Public Ingress Traffic & AWS Security Groups"]
         
-        subgraph Ports["Ingress NodePort Routing"]
-            P1["Port :30088 (Storefront)"]
-            P2["Port :30300 (Grafana)"]
-            P3["Port :30808 (Jenkins)"]
+        subgraph Ports ["NodePort Ingress Routing"]
+            P1["Port :30088 (Storefront UI)"]
+            P2["Port :30300 (Grafana Telemetry)"]
+            P3["Port :30808 (Jenkins CI/CD)"]
         end
-        
-        Ingress --> P1
-        Ingress --> P2
-        Ingress --> P3
 
-        subgraph K3s["K3s Lightweight Kubernetes Cluster Runtime"]
+        Traffic --> P1
+        Traffic --> P2
+        Traffic --> P3
+
+        subgraph K3s ["K3s Lightweight Kubernetes Cluster Runtime"]
             
-            subgraph BoutiqueNS["Namespace: boutique (11 Google Microservices)"]
-                Frontend["Frontend Service\n(Target: HPA 1-3 Pods @ 80% CPU)"]
-                Cart["Cart Service"]
-                Redis[("Redis Cart Cache")]
-                Catalog["Product Catalog Service"]
-                Payment["Payment Service"]
-                Shipping["Shipping Service"]
-                Email["Email Service"]
-                Checkout["Checkout Service"]
-                Recommend["Recommendation Service"]
-                Ad["Ad Service"]
-                Currency["Currency Service"]
-                LoadGen["Locust Load Generator\n(Traffic Simulation Engine)"]
+            subgraph Boutique ["Namespace: boutique (11 Microservices)"]
+                Frontend["Frontend Web Gateway (HPA Managed)"]
+                CartService["Cart Service"]
+                RedisCache[("Redis In-Memory Cache")]
+                ProductCatalog["Product Catalog Service"]
+                PaymentService["Payment Service"]
+                ShippingService["Shipping Service"]
+                EmailService["Email Service"]
+                CheckoutService["Checkout Service"]
+                RecommendService["Recommendation Service"]
+                AdService["Ad Service"]
+                CurrencyService["Currency Service"]
+                LocustEngine["Locust Synthetic Traffic Generator"]
                 
-                P1 --> Frontend
-                Frontend --> Cart --> Redis
-                Frontend --> Catalog
-                Frontend --> Payment
-                Frontend --> Shipping
-                Frontend --> Email
-                Frontend --> Checkout
-                Frontend --> Recommend
-                Frontend --> Ad
-                Frontend --> Currency
-                LoadGen -.->|Simulated Shopper Surge| Frontend
+                Frontend --> CartService --> RedisCache
+                Frontend --> ProductCatalog
+                Frontend --> PaymentService
+                Frontend --> ShippingService
+                Frontend --> EmailService
+                Frontend --> CheckoutService
+                Frontend --> RecommendService
+                Frontend --> AdService
+                Frontend --> CurrencyService
+                LocustEngine -.->|Generates Traffic Spikes| Frontend
             end
 
-            subgraph MonitoringNS["Namespace: monitoring"]
-                Grafana["Grafana Observability Engine\n(Cluster & Node Telemetry UI)"]
-                P2 --> Grafana
+            subgraph JenkinsNS ["Namespace: jenkins"]
+                JenkinsServer["Jenkins CI/CD Automation Master"]
             end
 
-            subgraph JenkinsNS["Namespace: jenkins"]
-                Jenkins["Jenkins CI/CD Automation Controller\n(Declarative Pipeline Engine)"]
-                P3 --> Jenkins
+            subgraph MonitoringNS ["Namespace: monitoring"]
+                GrafanaDashboard["Grafana Metrics & Observability Console"]
             end
 
-            subgraph SRE["Cluster Resilience & Control Loop"]
-                Metrics["Metrics Server API"]
-                HPACtrl["Horizontal Pod Autoscaler (HPA v2)"]
-                Reconciler["K3s ReplicaSet Controller (Auto-Healing)"]
+            subgraph ControlPlane ["Resilience & Autoscaling Controllers"]
+                HPALoop["HPA v2 Autoscaler (80% CPU Target)"]
+                K8sHealer["ReplicaSet Self-Healing Controller"]
                 
-                Metrics --> HPACtrl
-                HPACtrl -.->|Dynamic Replicas 1-3| Frontend
-                Reconciler -.->|Instant Pod Recreation < 2s| BoutiqueNS
+                HPALoop -.->|Scales 1 to 3 Replicas| Frontend
+                K8sHealer -.->|Instant Pod Recreation < 2s| Boutique
             end
+
+            P1 --> Frontend
+            P2 --> GrafanaDashboard
+            P3 --> JenkinsServer
         end
     end
-🌐 Network & Ingress Routing MatrixApplication / ConsoleNamespaceTarget Container PortExposed NodePortAccess Endpoint URLProtocol / Status🛍️ Boutique Storefrontboutique808030088http://<EC2-PUBLIC-IP>:30088HTTP / Active📊 Grafana Observabilitymonitoring300030300http://<EC2-PUBLIC-IP>:30300HTTP / Active⚙️ Jenkins Automationjenkins808030808http://<EC2-PUBLIC-IP>:30808HTTP / Active🔍 Engineering Highlights & SRE Capabilities1. Google Online Boutique OrchestrationDeploys Google Cloud's official 11-tier microservices architecture within a dedicated boutique namespace. The deployment includes stateful caching (redis-cart), inter-service communication, and an edge web layer (frontend) serving simulated e-commerce operations.2. High-Availability & Self-Healing ResilienceLeveraging Kubernetes continuous state reconciliation loops, if any microservice pod experiences an unexpected crash, out-of-memory error, or manual deletion, the ReplicaSet controller detects the drift and schedules a replacement pod in $< 2$ seconds, ensuring zero downtime.3. Dynamic Horizontal Pod Autoscaling (HPA)Configured using the autoscaling/v2 API:Target Metric: 80% Average CPU UtilizationScale Boundaries: Min: 1 Pod | Max: 3 PodsKeeps resource consumption minimal during baseline usage (1 pod) and elastically scales up to 3 pods during traffic surges to maintain latency SLAs.4. Containerized Jenkins CI/CD AutomationJenkins LTS runs natively inside the cluster (jenkins namespace) with a persistent workspace. The declarative pipeline automates health checks, verifies service availability across NodePorts, and coordinates zero-downtime rolling updates.5. Centralized Observability & TelemetryGrafana is deployed inside the monitoring namespace to provide real-time visibility into node health, pod resource limits, and cluster performance metrics.🧪 Chaos Testing & Live Verification🔬 Test 1: Simulating Pod Failure & Self-HealingDemonstrate zero-downtime container self-healing:Bash# Force delete an active frontend pod
+🌐 Network & Ingress Routing Matrix
+Application / Console	Namespace	Target Container Port	Exposed NodePort	Access Endpoint URL	Protocol / Status
+🛍️ Boutique Storefront	boutique	8080	30088	http://<EC2-PUBLIC-IP>:30088	HTTP / Active
+📊 Grafana Dashboard	monitoring	3000	30300	http://<EC2-PUBLIC-IP>:30300	HTTP / Active
+⚙️ Jenkins Automation	jenkins	8080	30808	http://<EC2-PUBLIC-IP>:30808	HTTP / Active
+🔍 How the Platform Works: Core SRE & DevOps Mechanics
+1. Zero-Touch Orchestration (deploy-all.sh)
+The master orchestration engine handles cluster lifecycle automation end-to-end:
+
+Detects and removes conflicting runtime processes.
+
+Installs the lightweight K3s Kubernetes control plane with an embedded SQLite engine and containerd.
+
+Creates logical tenant isolation using dedicated namespaces (boutique, monitoring, jenkins).
+
+Fetches and applies Google Cloud's 11-tier microservice architecture, applies custom NodePort overlays, configures dynamic autoscaling, and launches telemetry services automatically.
+
+2. Microservices Architecture (Google Online Boutique)
+An enterprise 11-tier microservices platform running isolated workloads:
+
+Frontend Web Layer: Aggregates data from downstream services and serves user sessions.
+
+State Management: Fast session caching handled by Redis In-Memory and consumed by cartservice.
+
+Business Logic: Independent microservices handling checkout, payment processing, shipping calculation, recommendations, and multi-currency conversions.
+
+3. Self-Healing & Continuous Fault Recovery
+The platform uses Kubernetes declarative desired-state management. If any microservice crashes due to an unhandled exception, fatal memory spike, or manual container deletion, the K3s ReplicaSet controller immediately detects state drift and spawns an operational replacement pod in <2 seconds, ensuring complete application availability.
+
+4. Dynamic Horizontal Pod Autoscaling (HPA)
+Configured using Kubernetes autoscaling/v2:
+
+Target Metric: 80% Average CPU Utilization
+
+Scale Boundaries: Min: 1 Pod | Max: 3 Pods
+
+Under baseline load, the frontend runs on a single pod to conserve cloud compute costs. When simulated shopping traffic surges, the HPA controller elastically scales the frontend deployment to 3 replicas within seconds.
+
+5. CI/CD Pipeline & Observability
+Jenkins Automation: Deployed as a Kubernetes-native controller executing declarative Jenkinsfile pipelines to automate cluster health audits, service connectivity tests, and rolling updates.
+
+Grafana Telemetry: Provides visual telemetry monitoring node resource consumption, CPU/RAM utilization curves, and pod operational status in real time.
+
+🧪 Chaos Testing & Live Verification
+🔬 Test 1: Simulating Pod Crash & Instant Self-Healing
+Demonstrate zero-downtime container self-healing:
+
+Bash
+# Delete a running frontend pod
 kubectl delete pod -l app=frontend -n boutique
 
 # Observe instant reconciliation and pod rebirth in real time
 kubectl get pods -n boutique -l app=frontend -w
-🔬 Test 2: Simulating Traffic Surge & HPA Auto-ScalingGenerate synthetic load using the Locust engine to trigger autoscaling:Bash# Scale up the load generator to simulate traffic
+🔬 Test 2: Simulating Traffic Surge & HPA Dynamic Scaling
+Generate synthetic shopper traffic to test Horizontal Pod Autoscaling:
+
+Bash
+# Spin up the Locust traffic load generator
 kubectl scale deployment loadgenerator -n boutique --replicas=1
 
 # Watch the HPA controller detect high CPU and scale from 1 to 3 pods
@@ -130,19 +182,52 @@ kubectl get hpa -n boutique -w
 
 # Cool down and observe automatic scale-down back to 1 pod
 kubectl scale deployment loadgenerator -n boutique --replicas=0
-⚡ 1-Click Spin-Up & Rebuild Guide (3 Minutes)This entire platform can be rebuilt on a clean AWS EC2 instance using the automated bootstrap script:Step 1: Provision the AWS EC2 InstanceInstance Type: m7i-flex.large or t3.large (2 vCPU, 8 GB RAM recommended)OS: Ubuntu 24.04 LTSSecurity Group Inbound Rules:SSH: Port 22Storefront: Port 30088Grafana: Port 30300Jenkins: Port 30808Step 2: Clone and BootstrapRun these commands on your EC2 instance:Bash# 1. Clone repository
+⚡ 3-Minute Quickstart & Full Cluster Rebuild Guide
+This entire platform can be rebuilt on a clean AWS EC2 instance using the automated bootstrap script:
+
+Step 1: Provision the AWS EC2 Instance
+Instance Type: m7i-flex.large or t3.large (2 vCPU, 8 GB RAM recommended)
+
+OS: Ubuntu 24.04 LTS
+
+Security Group Inbound Rules:
+
+SSH: Port 22
+
+Storefront: Port 30088
+
+Grafana: Port 30300
+
+Jenkins: Port 30808
+
+Step 2: Clone and Bootstrap
+Run these commands on your EC2 instance:
+
+Bash
+# 1. Clone repository
 git clone [https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git](https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git) ~/my-project
 cd ~/my-project
 
 # 2. Make script executable and execute
 chmod +x deploy-all.sh
 sudo ./deploy-all.sh
-Step 3: Verify Running ServicesBash# Check all cluster pods across namespaces
+Step 3: Verify Running Services
+Bash
+# Check all cluster pods across namespaces
 kubectl get pods -A
 
 # Confirm Horizontal Pod Autoscaler status
 kubectl get hpa -n boutique
-Step 4: Access Your EndpointsE-Commerce Web Storefront: http://<YOUR_EC2_PUBLIC_IP>:30088Grafana Dashboard: http://<YOUR_EC2_PUBLIC_IP>:30300Jenkins Automation Server: http://<YOUR_EC2_PUBLIC_IP>:30808📁 Repository BlueprintPlaintext.
+Step 4: Access Your Endpoints
+E-Commerce Web Storefront: http://<YOUR_EC2_PUBLIC_IP>:30088
+
+Grafana Dashboard: http://<YOUR_EC2_PUBLIC_IP>:30300
+
+Jenkins Automation Server: http://<YOUR_EC2_PUBLIC_IP>:30808
+
+📁 Repository Blueprint
+Plaintext
+.
 ├── deploy-all.sh          # 1-Click Master Infrastructure Bootstrapping Script
 ├── boutique-patch.yaml    # NodePort service patch exposing Storefront on :30088
 ├── hpa.yaml               # Horizontal Pod Autoscaler manifest (80% CPU target, 1-3 replicas)
@@ -153,8 +238,6 @@ Step 4: Access Your EndpointsE-Commerce Web Storefront: http://<YOUR_EC2_PUBLIC_
 
 ---
 
-### How to apply this directly in your EC2 terminal:
-
-```bash
-cd ~/my-project
-git pull origin main
+2. Click on `README.md`, then click the **pencil icon (✏️)** in the top right corner to edit.
+3. Select everything, press **Backspace/Delete**, and **Paste** the code block above.
+4. Click the green **Commit changes...** button at the top right $\rightarrow$ click **Commit changes**.
