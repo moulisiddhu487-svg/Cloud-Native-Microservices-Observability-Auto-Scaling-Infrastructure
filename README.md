@@ -16,7 +16,7 @@
 
 </div>
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🎯 PROJECT OVERVIEW
 
@@ -35,7 +35,7 @@ The platform combines:
 
 The project demonstrates how a microservices workload can be **deployed, monitored, scaled, tested under failure, and recovered using Kubernetes and SRE practices**.
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🏗️ SYSTEM ARCHITECTURE
 
@@ -88,7 +88,7 @@ The project demonstrates how a microservices workload can be **deployed, monitor
 
 **Core flow:** AWS EC2 → K3s → Kubernetes namespaces → application + CI/CD + observability.
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🚀 ENGINEERING HIGHLIGHTS
 
@@ -126,7 +126,7 @@ recommendationservice
 loadgenerator
 ```
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🧪 VALIDATION & FAILURE TESTING
 
@@ -170,7 +170,7 @@ kubectl scale deployment loadgenerator -n boutique --replicas=0
 
 **Expected behavior:** workload pressure causes the frontend to scale within the configured replica limits, followed by scale-down after the load is removed.
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🛠️ TECHNOLOGY STACK
 
@@ -187,7 +187,7 @@ kubectl scale deployment loadgenerator -n boutique --replicas=0
 | 🧪 Load Testing | **Online Boutique Loadgenerator** |
 | ⚙️ Automation | **Bash** |
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🌐 NETWORK & ACCESS
 
@@ -199,7 +199,7 @@ kubectl scale deployment loadgenerator -n boutique --replicas=0
 | 📈 Prometheus | `default` | Internal | Metrics collection |
 | 🖥️ Node Exporter | `default` | Internal | Host metrics |
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## ⚡ DEPLOYMENT & RECOVERY
 
@@ -273,7 +273,7 @@ From a fresh EC2 instance, the platform can be recreated in approximately **3 mi
 
 > **The 3-minute capability is the recovery benefit of the deployment automation — the core project is the K3s self-healing, autoscaling, CI/CD, and observability platform.**
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 📁 REPOSITORY STRUCTURE
 
@@ -289,7 +289,7 @@ k3s-self-healing-cloud-platform/
 └── README.md              # Project documentation
 ```
 
-🔴 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 ─────────────────────────────────────────────────────────────
 
 ## 🎯 PROJECT OUTCOME
 
