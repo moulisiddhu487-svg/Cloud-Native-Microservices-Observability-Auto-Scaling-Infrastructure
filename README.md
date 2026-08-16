@@ -20,7 +20,8 @@
 
 ## 🎯 PROJECT OVERVIEW
 
-I built a Kubernetes/SRE platform on AWS EC2 using K3s to deploy and operate Google’s 11-microservice Online Boutique application. The platform demonstrates Kubernetes orchestration, self-healing configuration, HPA-based auto-scaling, Jenkins CI/CD, and Prometheus/Grafana observability with email alerts, with failure and scaling behavior validated through controlled tests.
+I built a lightweight **Kubernetes/SRE platform from scratch on AWS EC2 using K3s**, deploying Google's **Online Boutique 11-microservice e-commerce application**.
+
 The platform combines:
 
 - ☸️ **K3s Kubernetes orchestration**
@@ -112,13 +113,13 @@ Jenkins runs inside the `jenkins` namespace and uses a declarative `Jenkinsfile`
 
 ### 📊 Full-Stack Observability
 
-Monitors both the AWS EC2 host and Kubernetes workloads:
+The monitoring layer combines:
 
-- **Prometheus** — collects and stores metrics
-- **Node Exporter** — monitors EC2 CPU, memory, disk, and network
-- **Kube-State-Metrics** — monitors Kubernetes pods, deployments, replicas, and HPA state
-- **Grafana** — dashboards and configured threshold alerts with email notifications
-  
+- **Prometheus** — time-series metrics
+- **Node Exporter** — host-level metrics
+- **Kube-State-Metrics** — Kubernetes object/state metrics
+- **Grafana** — dashboards and manually configured threshold alerts with email notifications
+
 ### ⚙️ Resource Management
 
 Container **resource requests and limits** are configured for workloads to provide predictable scheduling and reduce CPU/memory contention.
@@ -255,40 +256,6 @@ kubectl scale deployment loadgenerator -n boutique --replicas=0
 
 🔴 ─────────────────────────────────────────────────────────────
 
-## ⚡ QUICK START
-
-Run the platform from an AWS EC2 Ubuntu environment using the repository deployment script.
-
-### 1. Clone
-
-```bash
-git clone https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git
-cd k3s-self-healing-cloud-platform
-```
-
-### 2. Deploy
-
-```bash
-chmod +x deploy-all.sh
-sudo ./deploy-all.sh
-```
-
-### 3. Verify
-
-```bash
-kubectl get nodes
-kubectl get pods -A
-kubectl get hpa -n boutique
-```
-
-### 4. Access
-
-```text
-Online Boutique → http://<EC2-PUBLIC-IP>:30088
-Grafana          → http://<EC2-PUBLIC-IP>:30300
-Jenkins          → http://<EC2-PUBLIC-IP>:30808
-```
-
 ## 💡 WHY K3S ON AWS EC2?
 
 This is intentionally a **single-node lab platform**, not a highly available production cluster. K3s provides a lightweight Kubernetes environment suited to the EC2 resource constraints while retaining standard Kubernetes workloads, HPA, and observability tooling.
@@ -366,7 +333,7 @@ K3s Kubernetes
 
 <div align="center">
 
-### ⚡ Cloud-Native. Observable. Scalable.
+### ⚡ Built from scratch. Tested under failure. Designed to scale.
 
 **AWS • K3s • Kubernetes • Jenkins • Prometheus • Grafana • SRE**
 
