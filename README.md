@@ -2,7 +2,7 @@
 
 # ⚡ K3s Self-Healing Cloud Platform
 
-### Production-Style Kubernetes & SRE Infrastructure on AWS EC2
+### Production-Inspired Kubernetes & SRE Platform on AWS EC2
 
 <p>
 <img src="https://img.shields.io/badge/AWS-EC2-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white">
@@ -29,7 +29,7 @@ The platform combines:
 - 🛡️ **Kubernetes self-healing**
 - 📈 **HPA-based frontend autoscaling**
 - 🔄 **Jenkins CI/CD**
-- 📊 **Prometheus, Node Exporter & Grafana observability**
+- 📊 **Prometheus, Node Exporter, Kube-State-Metrics & Grafana observability**
 - 🧪 **Pod-failure and load-testing validation**
 - ♻️ **Automated environment recovery**
 
@@ -96,17 +96,33 @@ The project demonstrates how a microservices workload can be **deployed, monitor
 
 The application runs with Kubernetes desired-state reconciliation. When a running application pod is deleted or fails, Kubernetes detects the missing replica and creates a replacement automatically.
 
-### 📈 Dynamic HPA Autoscaling
+### 📈 Elastic HPA Autoscaling
 
-The frontend uses Kubernetes `autoscaling/v2` with an **80% CPU target**, scaling between **1 and 3 replicas** according to workload pressure.
+HPA uses CPU utilization to scale the selected bottleneck services:
+
+```text
+Frontend                 1 → 3 replicas
+Cartservice              1 → 3 replicas
+Recommendationservice    1 → 2 replicas
+CPU target                  80%
+```
 
 ### 🔄 Jenkins CI/CD
 
 Jenkins runs inside the `jenkins` namespace and uses a declarative `Jenkinsfile` for pipeline execution, health verification, endpoint checks, and deployment workflow / rolling updates.
 
-### 📊 Grafana Observability
+### 📊 Full-Stack Observability
 
-The monitoring layer combines **Prometheus** for time-series metrics, **Node Exporter** for host-level metrics, and **Grafana** for operational visualization.
+The monitoring layer combines:
+
+- **Prometheus** — time-series metrics
+- **Node Exporter** — host-level metrics
+- **Kube-State-Metrics** — Kubernetes object/state metrics
+- **Grafana** — dashboards and manually configured threshold alerts with email notifications
+
+### ⚙️ Resource Management
+
+Container **resource requests and limits** are configured for workloads to provide predictable scheduling and reduce CPU/memory contention.
 
 ### 🧩 11-Microservice Platform
 
@@ -115,7 +131,6 @@ Google's Online Boutique workload is deployed as **11 Kubernetes services** in t
 ```text
 frontend
 cartservice
-redis-cart
 productcatalogservice
 currencyservice
 paymentservice
@@ -123,6 +138,7 @@ shippingservice
 emailservice
 checkoutservice
 recommendationservice
+adservice
 loadgenerator
 ```
 
@@ -134,41 +150,79 @@ The engineering capabilities are validated separately through controlled failure
 
 ### Test 1 — Pod Failure & Self-Healing
 
-A running frontend pod is intentionally removed:
+```text
+Delete pod
+   ↓
+Kubernetes detects desired-state mismatch
+   ↓
+Replacement pod
+   ↓
+Replica state restored
+```
+
+**Run:**
+
+```bash
+kubectl get pods -n boutique -l app=frontend
+```
 
 ```bash
 kubectl delete pod -l app=frontend -n boutique
 ```
 
-The workload is then watched:
-
 ```bash
 kubectl get pods -n boutique -l app=frontend -w
 ```
 
-**Expected behavior:** Kubernetes detects the missing replica and creates a replacement pod.
+**Expected:** the deleted frontend pod is replaced automatically.
 
 ### Test 2 — HPA Scaling Under Load
 
-The Online Boutique load generator is enabled:
+```text
+Load generator
+      ↓
+CPU increases
+      ↓
+HPA detects threshold
+      ↓
+Replica count increases
+      ↓
+Load removed
+      ↓
+Replica count decreases
+```
+
+**Start the load generator:**
 
 ```bash
 kubectl scale deployment loadgenerator -n boutique --replicas=1
 ```
 
-HPA behavior is monitored:
+**Watch HPA:**
 
 ```bash
 kubectl get hpa -n boutique -w
 ```
 
-After the scaling test, the load generator is stopped:
+**Watch replicas:**
+
+```bash
+kubectl get pods -n boutique -w
+```
+
+**Inspect HPA details:**
+
+```bash
+kubectl describe hpa -n boutique
+```
+
+**Stop the load generator:**
 
 ```bash
 kubectl scale deployment loadgenerator -n boutique --replicas=0
 ```
 
-**Expected behavior:** workload pressure causes the frontend to scale within the configured replica limits, followed by scale-down after the load is removed.
+**Expected:** configured HPA targets scale up under sustained CPU pressure and scale down after load is removed.
 
 🔴 ─────────────────────────────────────────────────────────────
 
@@ -182,8 +236,9 @@ kubectl scale deployment loadgenerator -n boutique --replicas=0
 | 🛍️ Application | **Google Online Boutique — 11 microservices** |
 | 🔄 CI/CD | **Jenkins / Jenkinsfile** |
 | 📈 Autoscaling | **Kubernetes HPA** |
-| 📊 Metrics | **Prometheus / Node Exporter** |
-| 📉 Observability | **Grafana** |
+| 📊 Metrics | **Prometheus / Node Exporter / Kube-State-Metrics** |
+| 📉 Observability | **Grafana dashboards + email alerts** |
+| 🔔 Alerting | **Grafana Alerting + Email** |
 | 🧪 Load Testing | **Online Boutique Loadgenerator** |
 | ⚙️ Automation | **Bash** |
 
@@ -265,15 +320,26 @@ Grafana          → http://<EC2-PUBLIC-IP>:30300
 Jenkins          → http://<EC2-PUBLIC-IP>:30808
 ```
 
-### ♻️ 7. 3-Minute Environment Recovery
+### ♻️ Reproducible Recovery
 
-If the EC2 instance or environment is lost, the same repository and deployment automation provide a recovery path.
+If the EC2 environment is lost, the repository and deployment automation provide a repeatable path to recreate the platform.
 
-From a fresh EC2 instance, the platform can be recreated in approximately **3 minutes** using the repository files and `deploy-all.sh`.
-
-> **The 3-minute capability is the recovery benefit of the deployment automation — the core project is the K3s self-healing, autoscaling, CI/CD, and observability platform.**
+The recovery capability is a supporting benefit of the automation; the core project is the Kubernetes self-healing, autoscaling, CI/CD, observability, and failure-testing platform.
 
 🔴 ─────────────────────────────────────────────────────────────
+
+## 💡 WHY K3S ON AWS EC2?
+
+This is intentionally a **single-node lab platform**, not a highly available production cluster. K3s provides a lightweight Kubernetes environment suited to the EC2 resource constraints while retaining standard Kubernetes workloads, HPA, and observability tooling.
+
+| | This Project | Enterprise Production |
+|---|---|---|
+| Kubernetes | **K3s** | **Managed Kubernetes / EKS** |
+| Infrastructure | **Single AWS EC2** | **Multi-node / Multi-AZ** |
+| Purpose | **DevOps/SRE portfolio lab** | **Production workloads** |
+| Workload model | **Standard Kubernetes** | **Standard Kubernetes** |
+
+The project demonstrates production-relevant Kubernetes/SRE patterns without claiming that a single-node lab provides production HA.
 
 ## 📁 REPOSITORY STRUCTURE
 
@@ -319,7 +385,7 @@ K3s Kubernetes
                  Automated Recovery
 ```
 
-### What this demonstrates
+### What This Demonstrates
 
 **Infrastructure** → AWS EC2 + K3s
 
@@ -331,7 +397,7 @@ K3s Kubernetes
 
 **Delivery** → Jenkins + Jenkinsfile
 
-**Observability** → Prometheus + Node Exporter + Grafana
+**Observability** → Prometheus + Node Exporter + Kube-State-Metrics + Grafana
 
 **Resilience** → Controlled pod-failure and load testing
 
@@ -339,7 +405,7 @@ K3s Kubernetes
 
 <div align="center">
 
-### ⚡ Built from scratch. Tested under failure. Designed to recover.
+### ⚡ Built from scratch. Tested under failure. Designed to scale.
 
 **AWS • K3s • Kubernetes • Jenkins • Prometheus • Grafana • SRE**
 
