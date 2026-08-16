@@ -1,0 +1,31 @@
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: platform-alerts
+        rules:
+          # Alert 1: Frontend CPU spike above 80%
+          - alert: FrontendHighCPU
+            expr: sum(rate(container_cpu_usage_seconds_total{namespace="boutique", pod=~"frontend-.*"}[1m])) by (pod) > 0.08
+            for: 30s
+            labels:
+              severity: warning
+            annotations:
+              summary: "Frontend pod CPU exceeded 80% threshold!"
+
+          # Alert 2: Any microservice stops running
+          - alert: MicroserviceDown
+            expr: kube_pod_status_phase{namespace="boutique", phase="Running"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "A microservice in boutique namespace is down!"
+
+          # Alert 3: Entire EC2 Node CPU load exceeds 80%
+          - alert: HighNodeCPU
+            expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100) > 80
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Total EC2 Node CPU utilization is over 80%!"
