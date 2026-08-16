@@ -20,8 +20,7 @@
 
 ## 🎯 PROJECT OVERVIEW
 
-I built a lightweight **Kubernetes/SRE platform from scratch on AWS EC2 using K3s**, deploying Google's **Online Boutique 11-microservice e-commerce application**.
-
+I built a Kubernetes/SRE platform on AWS EC2 using K3s to deploy and operate Google’s 11-microservice Online Boutique application. The platform demonstrates Kubernetes orchestration, self-healing configuration, HPA-based auto-scaling, Jenkins CI/CD, and Prometheus/Grafana observability with email alerts, with failure and scaling behavior validated through controlled tests.
 The platform combines:
 
 - ☸️ **K3s Kubernetes orchestration**
@@ -113,13 +112,13 @@ Jenkins runs inside the `jenkins` namespace and uses a declarative `Jenkinsfile`
 
 ### 📊 Full-Stack Observability
 
-The monitoring layer combines:
+Monitors both the AWS EC2 host and Kubernetes workloads:
 
-- **Prometheus** — time-series metrics
-- **Node Exporter** — host-level metrics
-- **Kube-State-Metrics** — Kubernetes object/state metrics
-- **Grafana** — dashboards and manually configured threshold alerts with email notifications
-
+- **Prometheus** — collects and stores metrics
+- **Node Exporter** — monitors EC2 CPU, memory, disk, and network
+- **Kube-State-Metrics** — monitors Kubernetes pods, deployments, replicas, and HPA state
+- **Grafana** — dashboards and configured threshold alerts with email notifications
+  
 ### ⚙️ Resource Management
 
 Container **resource requests and limits** are configured for workloads to provide predictable scheduling and reduce CPU/memory contention.
