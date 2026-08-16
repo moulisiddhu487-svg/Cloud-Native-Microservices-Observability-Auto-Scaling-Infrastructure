@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ K3s Self-Healing Cloud Platform
+# ⚡ Cloud-Native Microservices Observability & Auto-Scaling Infrastructure
 
 ### Production-Inspired Kubernetes & SRE Platform on AWS EC2
 
@@ -92,7 +92,7 @@ The project demonstrates how a microservices workload can be **deployed, monitor
 
 ## 🚀 ENGINEERING HIGHLIGHTS
 
-### 🛡️ Kubernetes Self-Healing
+### 🛡️ Self-Healing Configuration
 
 The application runs with Kubernetes desired-state reconciliation. When a running application pod is deleted or fails, Kubernetes detects the missing replica and creates a replacement automatically.
 
@@ -148,7 +148,7 @@ loadgenerator
 
 The engineering capabilities are validated separately through controlled failure and workload scenarios.
 
-### Test 1 — Pod Failure & Self-Healing
+### Test 1 — Pod Failure Recovery
 
 ```text
 Delete pod
@@ -195,7 +195,7 @@ Replica count decreases
 **Start the load generator:**
 
 ```bash
-kubectl scale deployment loadgenerator -n boutique --replicas=1
+kubectl scale deployment loadgenerator -n boutique --replicas=3
 ```
 
 **Watch HPA:**
@@ -256,55 +256,25 @@ kubectl scale deployment loadgenerator -n boutique --replicas=0
 
 🔴 ─────────────────────────────────────────────────────────────
 
-## ⚡ DEPLOYMENT & RECOVERY
+## ⚡ QUICK START
 
-The platform is deployed on an AWS EC2 instance and can be recreated from the project repository and deployment automation.
+Run the platform from an AWS EC2 Ubuntu environment using the repository deployment script.
 
-### 1. AWS EC2 Environment
-
-The project environment uses:
-
-```text
-Cloud:          AWS EC2
-Instance:       c7i-flex.large
-CPU:            2 vCPU
-Memory:         4 GiB
-Operating OS:   Ubuntu 24.04 LTS
-Orchestrator:   K3s
-```
-
-### 2. AWS Security Group
-
-Required inbound access:
-
-```text
-22      → SSH
-30088   → Online Boutique
-30300   → Grafana
-30808   → Jenkins
-```
-
-### 3. Clone the Repository
-
-On the fresh EC2 instance:
+### 1. Clone
 
 ```bash
-git clone https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git ~/my-project
-cd ~/my-project
+git clone https://github.com/moulisiddhu487-svg/k3s-self-healing-cloud-platform.git
+cd k3s-self-healing-cloud-platform
 ```
 
-### 4. Spin Up the Platform
-
-Run the project's deployment automation:
+### 2. Deploy
 
 ```bash
 chmod +x deploy-all.sh
 sudo ./deploy-all.sh
 ```
 
-The automation prepares the K3s environment and applies the project's Kubernetes configuration for the application, autoscaling, monitoring, and Jenkins components.
-
-### 5. Verify
+### 3. Verify
 
 ```bash
 kubectl get nodes
@@ -312,21 +282,13 @@ kubectl get pods -A
 kubectl get hpa -n boutique
 ```
 
-### 6. Access the Services
+### 4. Access
 
 ```text
 Online Boutique → http://<EC2-PUBLIC-IP>:30088
 Grafana          → http://<EC2-PUBLIC-IP>:30300
 Jenkins          → http://<EC2-PUBLIC-IP>:30808
 ```
-
-### ♻️ Reproducible Recovery
-
-If the EC2 environment is lost, the repository and deployment automation provide a repeatable path to recreate the platform.
-
-The recovery capability is a supporting benefit of the automation; the core project is the Kubernetes self-healing, autoscaling, CI/CD, observability, and failure-testing platform.
-
-🔴 ─────────────────────────────────────────────────────────────
 
 ## 💡 WHY K3S ON AWS EC2?
 
