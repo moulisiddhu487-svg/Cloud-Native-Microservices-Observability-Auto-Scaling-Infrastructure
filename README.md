@@ -366,7 +366,7 @@ K3s Kubernetes
 
 <div align="center">
 
-### ⚡ Built from scratch. Tested under failure. Designed to scale.
+### ⚡ Cloud-Native. Observable. Scalable.
 
 **AWS • K3s • Kubernetes • Jenkins • Prometheus • Grafana • SRE**
 
