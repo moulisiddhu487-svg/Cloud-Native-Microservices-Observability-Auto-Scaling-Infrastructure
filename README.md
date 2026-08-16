@@ -31,7 +31,6 @@ The platform combines:
 - 🔄 **Jenkins CI/CD**
 - 📊 **Prometheus, Node Exporter, Kube-State-Metrics & Grafana observability**
 - 🧪 **Pod-failure and load-testing validation**
-- ♻️ **Automated environment recovery**
 
 The project demonstrates how a microservices workload can be **deployed, monitored, scaled, tested under failure, and recovered using Kubernetes and SRE practices**.
 
