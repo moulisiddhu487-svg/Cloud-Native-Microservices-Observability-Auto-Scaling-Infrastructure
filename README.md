@@ -69,8 +69,8 @@ The project demonstrates how a microservices workload can be **deployed, monitor
    │                 │     │                 │      │                 │
    │ Online Boutique │     │ Prometheus      │      │ Jenkins         │
    │ 11 services     │     │ Node Exporter   │      │ Jenkinsfile     │
-   │ + Redis         │     │ Grafana         │      │ CI/CD pipeline  │
-   │ + Loadgenerator │     │                 │      │                 │
+   │                 │     │ Grafana         │      │ CI/CD pipeline  │
+   │+ Loadgenerator  │     │                 │      │                 │
    └───────┬─────────┘     └─────────────────┘      └─────────────────┘
            │
            ├──────────────► Self-Healing
