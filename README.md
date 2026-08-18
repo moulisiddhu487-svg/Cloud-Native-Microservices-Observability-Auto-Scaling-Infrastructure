@@ -20,7 +20,7 @@
 
 ## 🎯 PROJECT OVERVIEW
 
-I built a lightweight **Kubernetes/SRE platform from scratch on AWS EC2 using K3s**, deploying Google's **Online Boutique 11-microservice e-commerce application**.
+I built a Kubernetes/SRE platform on AWS EC2 using K3s to deploy and operate Google’s 11-microservice Online Boutique application. The platform demonstrates Kubernetes orchestration, self-healing configuration, HPA-based auto-scaling, Jenkins CI/CD, and Prometheus/Grafana observability with email alerts, with failure and scaling behavior validated through controlled tests.
 
 The platform combines:
 
