@@ -1,140 +1,340 @@
 <div align="center">
 
-<img src="./assets/banner.png" width="100%"/>
+# ⚡ Cloud-Native Microservices Observability & Auto-Scaling Infrastructure
+
+### Production-Inspired Kubernetes & SRE Platform on AWS EC2
+
+<p>
+<img src="https://img.shields.io/badge/AWS-EC2-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white">
+<img src="https://img.shields.io/badge/Kubernetes-K3s-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white">
+<img src="https://img.shields.io/badge/Jenkins-CI%2FCD-D24939?style=for-the-badge&logo=jenkins&logoColor=white">
+<img src="https://img.shields.io/badge/Prometheus-Metrics-E6522C?style=for-the-badge&logo=prometheus&logoColor=white">
+<img src="https://img.shields.io/badge/Grafana-Observability-F46800?style=for-the-badge&logo=grafana&logoColor=white">
+<img src="https://img.shields.io/badge/Ubuntu-24.04-E95420?style=for-the-badge&logo=ubuntu&logoColor=white">
+<img src="https://img.shields.io/badge/Bash-Automation-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white">
+</p>
 
 </div>
 
-<br/><br/>
+🔴 ─────────────────────────────────────────────────────────────
 
-<img src="./assets/hdr-about.png" width="600"/>
+## 🎯 PROJECT OVERVIEW
 
-Aspiring DevOps & Cloud Engineer with a BSc in Mathematics, Electronics & Computer Science, plus hands-on DevOps training covering containerization, orchestration, infrastructure as code, and CI/CD automation. Deployed and hosted a serverless application on Azure Functions with an automated GitHub Actions CI/CD pipeline, including auth and cross-origin configuration. Currently pursuing the Microsoft Azure AZ-104 certification.
+I built a lightweight **Kubernetes/SRE platform from scratch on AWS EC2 using K3s**, deploying Google's **Online Boutique 11-microservice e-commerce application**.
 
+The platform combines:
+
+- ☸️ **K3s Kubernetes orchestration**
+- 🛍️ **11 Online Boutique microservices**
+- 🛡️ **Kubernetes self-healing**
+- 📈 **HPA-based frontend autoscaling**
+- 🔄 **Jenkins CI/CD**
+- 📊 **Prometheus, Node Exporter, Kube-State-Metrics & Grafana observability**
+- 🧪 **Pod-failure and load-testing validation**
+- ♻️ **Automated environment recovery**
+
+The project demonstrates how a microservices workload can be **deployed, monitored, scaled, tested under failure, and recovered using Kubernetes and SRE practices**.
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 🏗️ SYSTEM ARCHITECTURE
+
+```text
+                         ┌───────────────────────┐
+                         │    USER / ADMIN       │
+                         │       BROWSER         │
+                         └───────────┬───────────┘
+                                     │
+                                     ▼
+                         ┌───────────────────────┐
+                         │       AWS EC2         │
+                         │   Ubuntu 24.04 LTS    │
+                         │                       │
+                         │  AWS Security Group   │
+                         │  22 / 30088 / 30300   │
+                         │       / 30808         │
+                         └───────────┬───────────┘
+                                     │
+                                     ▼
+                         ┌───────────────────────┐
+                         │    K3s Kubernetes     │
+                         │        Cluster        │
+                         └───────────┬───────────┘
+                                     │
+             ┌───────────────────────┼────────────────────────┐
+             │                       │                        │
+             ▼                       ▼                        ▼
+   ┌─────────────────┐     ┌─────────────────┐      ┌─────────────────┐
+   │ boutique        │     │ default         │      │ jenkins         │
+   │ namespace       │     │ namespace       │      │ namespace       │
+   │                 │     │                 │      │                 │
+   │ Online Boutique │     │ Prometheus      │      │ Jenkins         │
+   │ 11 services     │     │ Node Exporter   │      │ Jenkinsfile     │
+   │ + Redis         │     │ Grafana         │      │ CI/CD pipeline  │
+   │ + Loadgenerator │     │                 │      │                 │
+   └───────┬─────────┘     └─────────────────┘      └─────────────────┘
+           │
+           ├──────────────► Self-Healing
+           │                Failed pod → replacement pod
+           │
+           └──────────────► HPA
+                            CPU target: 80%
+                            Frontend: 1 → 3 replicas
+
+       30088 → Online Boutique
+       30300 → Grafana
+       30808 → Jenkins
 ```
-currently_building : "Production-ready auto-healing K8s infrastructure"
-currently_learning  : "Azure AZ-104", "AWS Cloud Practitioner"
-trained_at          : "Xtream Tech, Hyderabad — Docker, K8s, Terraform, Ansible, AWS, Azure"
-ask_me_about        : "Serverless deployments, GitHub Actions CI/CD, K8s self-healing"
+
+**Core flow:** AWS EC2 → K3s → Kubernetes namespaces → application + CI/CD + observability.
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 🚀 ENGINEERING HIGHLIGHTS
+
+### 🛡️ Self-Healing Configuration
+
+The application runs with Kubernetes desired-state reconciliation. When a running application pod is deleted or fails, Kubernetes detects the missing replica and creates a replacement automatically.
+
+### 📈 Elastic HPA Autoscaling
+
+HPA uses CPU utilization to scale the selected bottleneck services:
+
+```text
+Frontend                 1 → 3 replicas
+Cartservice              1 → 3 replicas
+Recommendationservice    1 → 2 replicas
+CPU target                  80%
 ```
 
-<img src="https://capsule-render.vercel.app/api?type=rect&color=FF2800&height=2" width="100%"/>
+### 🔄 Jenkins CI/CD
 
-<img src="./assets/hdr-skills.png" width="600"/>
+Jenkins runs inside the `jenkins` namespace and uses a declarative `Jenkinsfile` for pipeline execution, health verification, endpoint checks, and deployment workflow / rolling updates.
+
+### 📊 Full-Stack Observability
+
+The monitoring layer combines:
+
+- **Prometheus** — time-series metrics
+- **Node Exporter** — host-level metrics
+- **Kube-State-Metrics** — Kubernetes object/state metrics
+- **Grafana** — dashboards and manually configured threshold alerts with email notifications
+
+### ⚙️ Resource Management
+
+Container **resource requests and limits** are configured for workloads to provide predictable scheduling and reduce CPU/memory contention.
+
+### 🧩 11-Microservice Platform
+
+Google's Online Boutique workload is deployed as **11 Kubernetes services** in the `boutique` namespace:
+
+```text
+frontend
+cartservice
+productcatalogservice
+currencyservice
+paymentservice
+shippingservice
+emailservice
+checkoutservice
+recommendationservice
+adservice
+loadgenerator
+```
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 🧪 VALIDATION & FAILURE TESTING
+
+The engineering capabilities are validated separately through controlled failure and workload scenarios.
+
+### Test 1 — Pod Failure Recovery
+
+```text
+Delete pod
+   ↓
+Kubernetes detects desired-state mismatch
+   ↓
+Replacement pod
+   ↓
+Replica state restored
+```
+
+**Run:**
+
+```bash
+kubectl get pods -n boutique -l app=frontend
+```
+
+```bash
+kubectl delete pod -l app=frontend -n boutique
+```
+
+```bash
+kubectl get pods -n boutique -l app=frontend -w
+```
+
+**Expected:** the deleted frontend pod is replaced automatically.
+
+### Test 2 — HPA Scaling Under Load
+
+```text
+Load generator
+      ↓
+CPU increases
+      ↓
+HPA detects threshold
+      ↓
+Replica count increases
+      ↓
+Load removed
+      ↓
+Replica count decreases
+```
+
+**Start the load generator:**
+
+```bash
+kubectl scale deployment loadgenerator -n boutique --replicas=3
+```
+
+**Watch HPA:**
+
+```bash
+kubectl get hpa -n boutique -w
+```
+
+**Watch replicas:**
+
+```bash
+kubectl get pods -n boutique -w
+```
+
+**Inspect HPA details:**
+
+```bash
+kubectl describe hpa -n boutique
+```
+
+**Stop the load generator:**
+
+```bash
+kubectl scale deployment loadgenerator -n boutique --replicas=0
+```
+
+**Expected:** configured HPA targets scale up under sustained CPU pressure and scale down after load is removed.
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 🛠️ TECHNOLOGY STACK
+
+| Layer | Technologies |
+|---|---|
+| ☁️ Cloud | **AWS EC2** |
+| 🐧 Operating System | **Ubuntu 24.04 LTS** |
+| ☸️ Orchestration | **K3s / Kubernetes** |
+| 🛍️ Application | **Google Online Boutique — 11 microservices** |
+| 🔄 CI/CD | **Jenkins / Jenkinsfile** |
+| 📈 Autoscaling | **Kubernetes HPA** |
+| 📊 Metrics | **Prometheus / Node Exporter / Kube-State-Metrics** |
+| 📉 Observability | **Grafana dashboards + email alerts** |
+| 🔔 Alerting | **Grafana Alerting + Email** |
+| 🧪 Load Testing | **Online Boutique Loadgenerator** |
+| ⚙️ Automation | **Bash** |
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 🌐 NETWORK & ACCESS
+
+| Service | Namespace | NodePort | Purpose |
+|---|---|---:|---|
+| 🛍️ Online Boutique | `boutique` | **30088** | E-commerce storefront |
+| 📊 Grafana | `default` | **30300** | Monitoring dashboard |
+| ⚙️ Jenkins | `jenkins` | **30808** | CI/CD web interface |
+| 📈 Prometheus | `default` | Internal | Metrics collection |
+| 🖥️ Node Exporter | `default` | Internal | Host metrics |
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 💡 WHY K3S ON AWS EC2?
+
+This is intentionally a **single-node lab platform**, not a highly available production cluster. K3s provides a lightweight Kubernetes environment suited to the EC2 resource constraints while retaining standard Kubernetes workloads, HPA, and observability tooling.
+
+| | This Project | Enterprise Production |
+|---|---|---|
+| Kubernetes | **K3s** | **Managed Kubernetes / EKS** |
+| Infrastructure | **Single AWS EC2** | **Multi-node / Multi-AZ** |
+| Purpose | **DevOps/SRE portfolio lab** | **Production workloads** |
+| Workload model | **Standard Kubernetes** | **Standard Kubernetes** |
+
+The project demonstrates production-relevant Kubernetes/SRE patterns without claiming that a single-node lab provides production HA.
+
+## 📁 REPOSITORY STRUCTURE
+
+```text
+k3s-self-healing-cloud-platform/
+│
+├── deploy-all.sh          # Platform deployment automation
+├── boutique-patch.yaml    # Online Boutique NodePort configuration
+├── hpa.yaml               # HPA configuration
+├── jenkins.yaml           # Jenkins deployment and service
+├── monitoring.yaml        # Monitoring / Grafana configuration
+├── Jenkinsfile            # Declarative CI/CD pipeline
+└── README.md              # Project documentation
+```
+
+🔴 ─────────────────────────────────────────────────────────────
+
+## 🎯 PROJECT OUTCOME
+
+This project demonstrates practical **DevOps and SRE engineering** across the complete platform lifecycle:
+
+```text
+AWS EC2
+   │
+   ▼
+K3s Kubernetes
+   │
+   ▼
+11-Service Online Boutique
+   │
+   ├──────────────► Self-Healing
+   │
+   ├──────────────► HPA Autoscaling
+   │
+   ├──────────────► Jenkins CI/CD
+   │
+   └──────────────► Prometheus + Node Exporter + Grafana
+                         │
+                         ▼
+                 Failure & Load Validation
+                         │
+                         ▼
+                 Automated Recovery
+```
+
+### What This Demonstrates
+
+**Infrastructure** → AWS EC2 + K3s
+
+**Orchestration** → Kubernetes workloads and namespaces
+
+**Reliability** → Self-healing through desired-state reconciliation
+
+**Scalability** → HPA from 1 to 3 frontend replicas
+
+**Delivery** → Jenkins + Jenkinsfile
+
+**Observability** → Prometheus + Node Exporter + Kube-State-Metrics + Grafana
+
+**Resilience** → Controlled pod-failure and load testing
+
+**Recovery** → Reproducible environment rebuild
 
 <div align="center">
 
-**Cloud & Infrastructure as Code**
+### ⚡ Built from scratch. Tested under failure. Designed to scale.
 
-![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![Azure](https://img.shields.io/badge/Azure-0089D6?style=for-the-badge&logo=microsoftazure&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
-![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white)
-
-**Containers & Orchestration**
-
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
-![Helm](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white)
-
-**CI/CD & Observability**
-
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
-![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white)
-![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
-![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white)
+**AWS • K3s • Kubernetes • Jenkins • Prometheus • Grafana • SRE**
 
 </div>
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=FF2800&height=2" width="100%"/>
-
-<img src="./assets/hdr-projects.png" width="600"/>
-
-**azure-resume-api** &nbsp; ![Done](https://img.shields.io/badge/DONE-2E7D32?style=flat-square) &nbsp;·&nbsp; **Cloud-Native-Microservices-Observability-Auto-Scaling-Infrastructure** &nbsp; ![Done](https://img.shields.io/badge/DONE-2E7D32?style=flat-square)
-
-### azure-resume-api — Serverless Resume API
-
-A cloud-native backend that serves my resume data as JSON over a REST endpoint — fully serverless on Azure, scales automatically, zero compute cost when idle.
-
-- **Architecture:** Azure Function triggers on HTTP GET, retrieves structured resume JSON (experience, skills, certifications), returns it with a 200 OK response.
-- **CI/CD:** GitHub Actions workflow deploys to Azure automatically on every push to main — no manual deployment steps.
-- **API Security:** Configured CORS to explicitly allow only trusted origins after debugging a browser-side CORS block when calling the API from my portfolio frontend.
-- **Debugged a real production issue:** Resolved an SCM authentication failure between GitHub Actions and Azure by correctly wiring the Function App's publish profile into GitHub Secrets.
-- **Roadmap:** Migrating hardcoded data to Azure Cosmos DB, adding API Management for rate-limiting and view analytics.
-
-<div align="center">
-
-[![Live Endpoint](https://img.shields.io/badge/Live_Endpoint-FF2800?style=for-the-badge&logo=fastapi&logoColor=white)](https://resume-api-30847.azurewebsites.net/api/cv)
-[![Source Code](https://img.shields.io/badge/Source_Code-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/moulisiddhu487-svg/azure-resume-api)
-
-</div>
-
-<br/>
-
-### Cloud-Native-Microservices-Observability-Auto-Scaling-Infrastructure — Kubernetes Observability & Auto-Scaling Platform
-
-Deploys and monitors an 11-service microservices app (Google's Online Boutique) on a Kubernetes cluster (K3s on AWS EC2), with automatic pod recovery, CPU-based autoscaling, and live Prometheus/Grafana monitoring — built to demonstrate real reliability engineering, not just "I ran a container."
-
-- **Microservices Deployment:** 11 services (frontend, cart, catalog, currency, payment, shipping, email, checkout, recommendation, ad, load generator) running as isolated pods communicating over internal Kubernetes DNS.
-- **Auto-Scaling (HPA):** CPU-based Horizontal Pod Autoscaling on `frontend` (1–3 pods), `cartservice` (1–3 pods), and `recommendationservice` (1–2 pods) — replicas scale up automatically past an 80% CPU target.
-- **Self-Healing:** Configured Liveness/Readiness probes so Kubernetes detects and replaces unhealthy or deleted pods automatically, without manual intervention.
-- **Observability:** Prometheus and Node Exporter collecting cluster/pod-level metrics, visualized in real-time Grafana dashboards with alerting rules.
-- **Validated under load:** Ran controlled failure and load tests (pod deletion, load-generator traffic spikes) via `kubectl` to confirm self-healing and scaling behavior end-to-end.
-- **Lab setup, production-portable:** Runs on a single AWS EC2 instance using K3s — a lightweight, CNCF-certified Kubernetes distribution. All manifests, HPA rules, and Helm charts are directly portable to a managed cluster like AWS EKS with no changes.
-
-<div align="center">
-
-[![Source Code](https://img.shields.io/badge/Source_Code-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/moulisiddhu487-svg/Cloud-Native-Microservices-Observability-Auto-Scaling-Infrastructure)
-
-</div>
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=FF2800&height=2" width="100%"/>
-
-<img src="./assets/hdr-ping.png" width="600"/>
-
-<div align="center">
-
-<table>
-<tr>
-<td align="center" width="110">
-<a href="https://www.linkedin.com/in/mouli-godaba-121a4525a/">
-<img src="https://cdn.simpleicons.org/linkedin/FF2800" width="34" height="34" alt="LinkedIn"/>
-<br/>
-<sub><b>LinkedIn</b></sub>
-</a>
-</td>
-<td align="center" width="110">
-<a href="mailto:moulisiddhu487@gmail.com">
-<img src="https://cdn.simpleicons.org/gmail/FF2800" width="34" height="34" alt="Gmail"/>
-<br/>
-<sub><b>Gmail</b></sub>
-</a>
-</td>
-<td align="center" width="110">
-<a href="https://mouli-portfolio-six.vercel.app/">
-<img src="https://cdn.simpleicons.org/vercel/FF2800" width="34" height="34" alt="Portfolio"/>
-<br/>
-<sub><b>Portfolio</b></sub>
-</a>
-</td>
-</tr>
-</table>
-
-</div>
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=FF2800&height=2" width="100%"/>
-
-<img src="./assets/hdr-stats.png" width="600"/>
-
-<div align="center">
-
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/moulisiddhu487-svg/moulisiddhu487-svg/output/github-contribution-grid-snake-dark.svg">
-  <img alt="red contribution snake animation" src="https://raw.githubusercontent.com/moulisiddhu487-svg/moulisiddhu487-svg/output/github-contribution-grid-snake.svg">
-</picture>
-
-</div>
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:FF2800,100:0A0E27&height=4" width="100%"/>
