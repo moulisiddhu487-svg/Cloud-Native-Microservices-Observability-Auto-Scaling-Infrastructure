@@ -272,13 +272,12 @@ The project demonstrates production-relevant Kubernetes/SRE patterns without cla
 ## 📁 REPOSITORY STRUCTURE
 
 ```text
-k3s-self-healing-cloud-platform/
+Cloud-Native-Microservices-Observability-Auto-Scaling-Infrastructure/
 │
-├── deploy-all.sh          # Platform deployment automation
+├── deploy-all.sh          # Platform deployment automation (incl. Prometheus & Grafana via Helm)
 ├── boutique-patch.yaml    # Online Boutique NodePort configuration
 ├── hpa.yaml               # HPA configuration
 ├── jenkins.yaml           # Jenkins deployment and service
-├── monitoring.yaml        # Monitoring / Grafana configuration
 ├── Jenkinsfile            # Declarative CI/CD pipeline
 └── README.md              # Project documentation
 ```
